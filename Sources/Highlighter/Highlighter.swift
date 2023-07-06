@@ -191,6 +191,32 @@ open class Highlighter {
         return true
     }
 
+    @discardableResult
+    open func setTheme(themePath: String?, withFont: String? = nil, ofSize: CGFloat? = nil) -> Bool {
+        
+        // Make sure we can load the theme's CSS file -- or fail
+        guard let themePath = themePath else {
+            return false
+        }
+        
+        // Create the required font
+        // If this fails ('font' == nil), we use the defaults
+        var font: HRFont? = nil
+        if let fontName: String = withFont {
+            var size: CGFloat = 14.0
+            if ofSize != nil {
+                size = ofSize!
+            }
+            
+            font = HRFont.init(name: fontName, size: size)
+        }
+        
+        // Get the theme CSS and instantiate a Theme object
+        let themeString = try! String.init(contentsOfFile: themePath)
+        self.theme = Theme.init(withTheme: themeString, usingFont: font)
+        return true
+    }
+
     
     /**
      Get a list of available Highlight.js themes.
